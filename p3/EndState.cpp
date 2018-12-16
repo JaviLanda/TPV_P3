@@ -1,24 +1,17 @@
 #include "EndState.h"
 
-
-
-EndState::EndState(Game* game) : GameState(game)
-{
-	initBoton();
+EndState::EndState(Game* g) : GameState(g) {
+	//objects.emplace_back(new Button(app, g->nTexturas[TMenu], 200, 400, Menu));		 //Probablemente este game se refiera a app
+	//objects.emplace_back(new Button(app, g->nTexturas[TExit], 500, 400, Exit));	//Probablemente este game se refiera a app
 }
 
-void EndState::initBoton() {
-	x = 250;
-	y = 50;
-	stage.emplace_back(new Button(app, game->nTexturas[TMenu], x, y, Menu));		 //Probablemente este game se refiera a app
-	stage.emplace_back(new Button(app, game->nTexturas[TExit], x, y + 200, Exit));	//Probablemente este game se refiera a app
+EndState::~EndState() {}
+
+bool EndState::OnEnter() {
+	cout << "En el EndState" << endl;
+	return true;
 }
 
-
-EndState::~EndState()
-{
-	delete stage.back();
-	delete stage.back();
-	stage.pop_back();
-	stage.pop_back();
+void EndState::Menu(Game * g) {
+	//g->getStateMachine()->changeState(new MainMenuState(g));
 }

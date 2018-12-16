@@ -1,12 +1,17 @@
 #pragma once
 #include "GameState.h"
-class EndState : public GameState
-{
-public:
-	EndState(Game* game);
-	static void Menu(Game* juego) { juego->stateMachine->changeState(new MainMenuState(juego)); }
-	static void Exit(Game* juego) { /*game->funcion de salir de juego    juego->onExit();*/ }
-	void initBoton();
-	~EndState();
-};
+#include "MainMenuState.h"
+#include "Button.h"
 
+class Game;
+class EndState : public GameState {
+public:
+	EndState(Game* g);
+	~EndState();
+
+	virtual bool OnEnter();
+
+private:
+	void Menu(Game* g);
+	void Exit(Game* g) { /*game->funcion de salir de juego    juego->onExit();*/ }
+};

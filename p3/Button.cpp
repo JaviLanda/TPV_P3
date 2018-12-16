@@ -1,37 +1,41 @@
 #include "Button.h"
 
+Button::Button(Game* juego, Texture* text, int x, int y, CallBackOnClick* cb) {
 
-Button::Button(Game* juego, Texture* text, int x, int y, CallBackOnClick* cb) : GameObject()
-{
+	pGame = juego;
+
 	ptext = text;
+
 	callB = cb;
+
 	rect.w = 300;
 	rect.h = 200;
 	rect.x = x;
 	rect.y = y;
-	src.w = ptext->getW();
-	src.h = ptext->getH();
-	
+
+	//src.w = ptext->getW();
+	//src.h = ptext->getH();
 }
 
 void Button::render() {
+	ptext->render(rect);
 	//ptext->drawFrame(game->getRender(), src, rect);
 }
 
 bool Button::handleEvent(SDL_Event& e) {
+	bool handle = false;
+
 	if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT) {
 		SDL_Point p = { e.button.x, e.button.y };
 		SDL_Rect r = { rect.x,rect.y, rect.w, rect.h };
 		
-		if (SDL_PointInRect(&p, &r))
-			//callB(game);
-			cout << "Pulsado";
-			return true;
+		if (SDL_PointInRect(&p, &r)) {
+			callB(pGame);
+			//cout << "Pulsado";
+			handle = true;
+		}
 	}
+	return handle;
 }
 
-
-
-Button::~Button()
-{
-}
+Button::~Button() {}

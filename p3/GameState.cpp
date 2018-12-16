@@ -1,39 +1,38 @@
 #include "GameState.h"
 
-
-
-GameState::GameState(Game* game) : app(game)
-{
+GameState::GameState(Game* game) : app(game) {
 }
 
-
 void GameState::update() {
-
-	for (GameObject* c : stage) {
-		c->update();
-	}
+	for (GameObject* c : objects) c->update();
 }
 
 void GameState::render() {
-	for (GameObject* c : stage) {
-		c->render();
-	}
+	for (GameObject* c : objects) c->render();
 }
 
-void GameState::handleEvent(SDL_Event &e) {
+bool GameState::handleEvent(SDL_Event &e) {
 	bool handled = false;
-	auto it = stage.begin();
-	while (!handled && it != stage.end()) {
-		if ((*it)->handleEvents())
-			handled = true;
-		else
-			++it;
+	//list<GameObject*>::iterator it = objects.begin();
+	
+	/*while (!handled && it != objects.end()) {
+		if ((*it)->handleEvents()) handled = true;
+		else ++it;
+	}*/
+
+	//for (GameObject* c : objects) c->handleEvents();
+	auto it = objects.begin();
+	
+	while (it != objects.end()) {
+		(*it)->handleEvents();
+	}
+	//return handled;
+	return true;
+}
+
+GameState::~GameState() {
+	for (GameObject* o : objects) {
+		delete o;
+		o = nullptr;
 	}
 }
-
-GameState::~GameState()
-{
-	for (GameObject* o : stage) delete o;
-}
-}
-

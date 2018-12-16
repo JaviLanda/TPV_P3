@@ -1,32 +1,27 @@
 #pragma once
 
-#include <vector>
+#include <iterator>
 #include "Texture.h"
 #include "SDL_ttf.h"
-#include "SDL_image.h"
 #include <list>
-#include "Game.h"
-#include <fstream>
-#include <string>
-#include <iostream>
 #include "GameObject.h"
 
 using namespace std;
 
-class GameState
-{
+class Game;
+
+class GameState {
 public:
 	GameState(Game* g);
+	virtual ~GameState();
+
 	virtual void update();
 	virtual void render();
-	virtual void handleEvent(SDL_Event &e);
-	Texture* text;
-	SDL_Rect src, rect;
-	~GameState();
+	virtual bool handleEvent(SDL_Event &e);
+
+	virtual bool OnEnter() = 0;
 
 protected:
-	list<GameObject*> stage;
 	Game* app;
-	int x, y;	//Posicion para los botones
+	list<GameObject*> objects;
 };
-
