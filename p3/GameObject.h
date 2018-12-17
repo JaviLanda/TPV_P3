@@ -2,13 +2,13 @@
 //#include "checkML.h"
 #include <list>
 #include <fstream>
+#include "Game.h"
 
 class GameObject {
 public:
-	GameObject();
-	virtual ~GameObject();
-
 	virtual void render() = 0;
 	virtual void update() = 0;
-	virtual bool handleEvent() = 0;
+	virtual bool handleEvent(SDL_Event & e) = 0;
+
+	Game* pApp = nullptr;
 };

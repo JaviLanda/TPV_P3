@@ -1,5 +1,9 @@
 #include "Game.h"
 
+#include "GameObject.h"
+#include "MainMenuState.h"
+#include "PlayState.h"
+
 Game::Game() {
 	initSDL();
 	initTextures();
@@ -79,17 +83,7 @@ void Game::run() {
 void Game::handleEvents() {
 	SDL_Event e;
 
-	SDL_PollEvent(&e);
-	switch (e.type) {
-	case SDLK_e:	// Al play State
-		stateMachine->changeState(new PlayState(this));
-		break;
-	case SDLK_w:	// Al mainMenuState
-		
-		break;
-	default:
-		break;
-	}
+	//stateMachine->currentState()->handleEvent(e);
 
 	while (SDL_PollEvent(&e) && !exit) {
 		if (e.type == SDL_QUIT)	end = true;

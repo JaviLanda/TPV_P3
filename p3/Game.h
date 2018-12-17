@@ -7,10 +7,7 @@
 #include <list>
 #include <SDL_ttf.h>	//Para textos
 
-#include "GameObject.h"
 #include "GameStateMachine.h"
-#include "MainMenuState.h"
-#include "PlayState.h"
 
 const uint NUM_TEXTURES = 7;
 const uint WIN_WIDTH = 800;

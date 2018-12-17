@@ -2,14 +2,16 @@
 #include "PlayState.h"
 
 MainMenuState::MainMenuState(Game* g) : GameState(g) {
-	//initBoton();
 	app = g;
+
+	initBoton();
 }
 
 MainMenuState::~MainMenuState() {}
 
 bool MainMenuState::OnEnter() {
 	cout << "En el MainMenu" << endl;
+	//app->getStateMachine()->changeState(new PlayState(app));
 	return true;
 }
 
@@ -19,24 +21,9 @@ bool MainMenuState::OnExit() {
 }
 
 void MainMenuState::initBoton() {
-	//x = 250;
-	//y = 50;
-	//objects.emplace_back(new Button(app, app->getText(Game::Textures_T::TPlay), 250, 50, Play));		//Probablemente este game se refiera a app
-	//stage.emplace_back(new Button(app, game->nTexturas[TLoad], x, y + 150, Load));	//Probablemente este game se refiera a app
-	//stage.emplace_back(new Button(app, game->nTexturas[TExit], x, y + 300, Exit));	//Probablemente este game se refiera a app
+	objects.emplace_back(new Button(app, Game::Textures_T::TPlay, 250, 50, Play));
+	//stage.emplace_back(new Button(app, game->nTexturas[TLoad], x, y + 150, Load));
+	//stage.emplace_back(new Button(app, game->nTexturas[TExit], x, y + 300, Exit));
 }
 
-bool MainMenuState::handleEvent(SDL_Event &e) {
-	if (e.type == SDL_KEYDOWN) {
-		switch (e.type) {
-		case SDLK_e:
-			
-			break;
-		default:
-			break;
-		}
-	}
-
-	GameState::handleEvent(e);
-	return true;
-}
+void MainMenuState::Play(Game* g) {	g->getStateMachine()->changeState(new PlayState(g)); }

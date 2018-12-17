@@ -1,4 +1,5 @@
 #include "GameStateMachine.h"
+#include "GameState.h"
 
 GameStateMachine::GameStateMachine() {}
 
@@ -10,7 +11,6 @@ void GameStateMachine::pushState(GameState* newSt) {
 void GameStateMachine::changeState(GameState* newState) {
 	popState();
 	pushState(newState);
-	pila.top()->OnEnter();
 }
 
 GameState* GameStateMachine::currentState() {
@@ -19,6 +19,7 @@ GameState* GameStateMachine::currentState() {
 
 void GameStateMachine::popState() {
 	if (!pila.empty()) {
+		pila.top()->OnExit();
 		delete pila.top();
 		pila.pop();
 	}

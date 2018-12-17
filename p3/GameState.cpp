@@ -15,7 +15,7 @@ bool GameState::handleEvent(SDL_Event &e) {
 	auto it = objects.begin();
 	
 	while (!handled && it != objects.end()) {
-		if ((*it)->handleEvent()) handled = true;
+		if ((*it)->handleEvent(e)) handled = true;
 		else ++it;
 	}
 

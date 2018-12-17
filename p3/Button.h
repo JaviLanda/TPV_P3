@@ -1,6 +1,5 @@
 #pragma once
 #include "Texture.h"
-#include "SDL.h"
 #include "GameObject.h"
 
 class Game;
@@ -8,7 +7,7 @@ class Game;
 class Button : public GameObject {
 public:
 	typedef void CallBackOnClick(Game* game);
-	Button(Game* juego, Texture* text, int x, int y, CallBackOnClick* cb);
+	Button(Game* juego, Game::Textures_T text, int x, int y, CallBackOnClick* cb);
 	~Button();
 
 	Texture* ptext;
@@ -19,6 +18,4 @@ public:
 protected:
 	CallBackOnClick* callB;
 	SDL_Rect rect;
-
-	Game* pGame = nullptr;
 };
