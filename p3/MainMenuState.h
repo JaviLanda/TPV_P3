@@ -2,15 +2,13 @@
 #include "GameState.h"
 #include "Button.h"
 
-#include <iostream>
-
 class MainMenuState : public GameState {
 public:
 	MainMenuState(Game* g);
 	~MainMenuState();
 		
 	void initBoton();
-	void Play(Game* g) { /*game->stateMachine->changeState(new PlayState(game));*/ }
+	void Play(Game* g) { /*g->getStateMachine->changeState(new PlayState(g));*/ }
 	void Exit(Game* g) { /*game->funcion de salir de juego    juego->onExit();*/ }
 	void Load(Game* g) { /*
 		game->load = true;
@@ -22,10 +20,10 @@ public:
 
 	virtual void update() {};
 	virtual void render() {};
-	virtual void handleEvents() {};
+	virtual bool handleEvent(SDL_Event &e);
 
 	virtual bool OnEnter();
-
+	virtual bool OnExit();
 protected:
 	
 };

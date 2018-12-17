@@ -4,12 +4,12 @@ GameStateMachine::GameStateMachine() {}
 
 void GameStateMachine::pushState(GameState* newSt) {
 	pila.push(newSt);
+	pila.top()->OnEnter();
 }
 
 void GameStateMachine::changeState(GameState* newState) {
 	popState();
 	pushState(newState);
-
 	pila.top()->OnEnter();
 }
 

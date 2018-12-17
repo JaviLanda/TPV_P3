@@ -2,14 +2,17 @@
 //#include "checkML.h"
 #include "Vector2D.h"
 #include "Texture.h"
-#include "GameObject.h"
-#include "GameStateMachine.h"
-#include "MainMenuState.h"
 #include "SDLError.h"
+
 #include <list>
 #include <SDL_ttf.h>	//Para textos
 
-const uint NUM_TEXTURES = 6;
+#include "GameObject.h"
+#include "GameStateMachine.h"
+#include "MainMenuState.h"
+#include "PlayState.h"
+
+const uint NUM_TEXTURES = 7;
 const uint WIN_WIDTH = 800;
 const uint WIN_HEIGHT = 600;
 
@@ -24,7 +27,8 @@ struct TextureAtributtes {
 const TextureAtributtes TEXT_ATT[NUM_TEXTURES] = {
 	{ "bricks.png", 2, 3 },{ "paddle.png", 1, 1 },
 	{ "ball.png", 1, 1 },{ "side.png", 1, 1 },
-	{ "topside.png", 1, 1 },{ "rewards.png", 10, 8 }
+	{ "topside.png", 1, 1 },{ "rewards.png", 10, 8 },
+	{ "dog.png", 1, 1}
 };
 
 class Game {
@@ -32,7 +36,7 @@ public:
 	Game();
 	~Game();
 
-	enum Textures_T { TBrick, TPaddle, TBall, TSide, TTopSide, TReward };
+	enum Textures_T { TBrick, TPaddle, TBall, TSide, TTopSide, TReward, TPlay };
 	Texture* getText(Textures_T et) const { return nTexturas[et]; }
 
 	SDL_Renderer* getRend() { return renderer; }

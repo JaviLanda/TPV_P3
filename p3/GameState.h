@@ -1,9 +1,11 @@
 #pragma once
 
 #include <iterator>
+#include <iostream>
+#include <list>
+
 #include "Texture.h"
 #include "SDL_ttf.h"
-#include <list>
 #include "GameObject.h"
 
 using namespace std;
@@ -20,8 +22,8 @@ public:
 	virtual bool handleEvent(SDL_Event &e);
 
 	virtual bool OnEnter() = 0;
-
+	virtual bool OnExit() = 0;
 protected:
-	Game* app;
+	Game *app;
 	list<GameObject*> objects;
 };

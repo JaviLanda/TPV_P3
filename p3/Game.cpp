@@ -40,7 +40,7 @@ bool Game::initSDL() {
 			}
 		}
 	}
-	if (TTF_Init() < 0)	throw SDLError("Error al cargar la librería TTF");
+	//if (TTF_Init() < 0)	throw SDLError("Error al cargar la librería TTF");
 
 	return load;
 }
@@ -60,7 +60,7 @@ void Game::initTextures() {
 
 void Game::run() {
 	Uint32 MSxUpdate = 120;
-	cout << "Play \n" << endl;
+	//cout << "Play \n" << endl;
 	Uint32 lastUpdate = SDL_GetTicks();
 	while (!end) {
 		if (SDL_GetTicks() - lastUpdate >= MSxUpdate) {//while(elapsed >= MSxUpdate)
@@ -78,6 +78,18 @@ void Game::run() {
 //Maneja los eventos de entrada
 void Game::handleEvents() {
 	SDL_Event e;
+
+	SDL_PollEvent(&e);
+	switch (e.type) {
+	case SDLK_e:	// Al play State
+		stateMachine->changeState(new PlayState(this));
+		break;
+	case SDLK_w:	// Al mainMenuState
+		
+		break;
+	default:
+		break;
+	}
 
 	while (SDL_PollEvent(&e) && !exit) {
 		if (e.type == SDL_QUIT)	end = true;

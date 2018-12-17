@@ -42,6 +42,7 @@ void Texture::renderFrame(const SDL_Rect& destRect, int row, int col, int angle,
 	SDL_RenderCopyEx(renderer, texture, &srcRect, &destRect, angle, 0, flip);
 }
 
+/*
 void Texture::loadFont(SDL_Renderer* pRenderer, TTF_Font* font, const char* msn, SDL_Color color) {
 	SDL_Surface* pTempSurface = nullptr;
 
@@ -57,3 +58,4 @@ void Texture::loadFont(SDL_Renderer* pRenderer, TTF_Font* font, const char* msn,
 		h = pTempSurface->h;
 	}
 }
+*/
