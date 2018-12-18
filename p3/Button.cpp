@@ -8,8 +8,8 @@ Button::Button(Game* juego, Game::Textures_T text, int x, int y, CallBackOnClick
 
 	callB = cb;
 
-	rect.w = 300;
-	rect.h = 200;
+	rect.w = 200;
+	rect.h = 100;
 	rect.x = x;
 	rect.y = y;
 

@@ -9,7 +9,7 @@ public:
 		
 	void initBoton();
 
-	virtual void update() {};
+	//virtual void update() {};
 	//virtual void render();
 	//virtual bool handleEvent(SDL_Event &e);
 
@@ -17,12 +17,14 @@ public:
 	virtual bool OnExit();
 private:
 	static void Play(Game* g);
-	void Exit(Game* g) { /*game->funcion de salir de juego    juego->onExit();*/ }
-	void Load(Game* g) { /*
+	static void Exit(Game* g);
+	static void Load(Game* g) { /*
 						 game->load = true;
 						 game->stateMachine->changeState(new PlayState(game));
 						 if (static_cast<PlayState*>(game->getStateMachine()->currentState())->filenotfound)
 						 game->stateMachine->changeState(new MenuState(game));
 						 */
 	}
+
+	bool b = false;
 };

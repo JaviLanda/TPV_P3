@@ -85,6 +85,7 @@ void Game::handleEvents() {
 
 	//stateMachine->currentState()->handleEvent(e);
 
+	//No entra aqui :(
 	while (SDL_PollEvent(&e) && !exit) {
 		if (e.type == SDL_QUIT)	end = true;
 		else stateMachine->currentState()->handleEvent(e);
@@ -99,7 +100,7 @@ void Game::update() {
 //Renderizado / dibujado
 void Game::render() {
 	SDL_RenderClear(renderer); //Limpiamos pantalla
-	stateMachine->currentState()->render(); //Preparamos el dibujado de los obejtos
+	stateMachine->currentState()->render(); //Preparamos el dibujado de los objetos
 	SDL_RenderPresent(renderer); //Dibujamos
 }
 
