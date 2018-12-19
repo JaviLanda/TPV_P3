@@ -1,7 +1,7 @@
 #include "MainMenuState.h"
 #include "PlayState.h"
 #include "PauseState.h"
-//#include "EndState.h"
+#include "EndState.h"
 
 MainMenuState::MainMenuState(Game* g) : GameState(g) {
 	app = g;
@@ -9,11 +9,8 @@ MainMenuState::MainMenuState(Game* g) : GameState(g) {
 	initBoton();
 }
 
-MainMenuState::~MainMenuState() {}
-
 bool MainMenuState::OnEnter() {
 	cout << "En el MainMenu" << endl;
-	//app->getStateMachine()->changeState(new PauseState(app));
 	return true;
 }
 
@@ -29,5 +26,5 @@ void MainMenuState::initBoton() {
 }
 
 void MainMenuState::Play(Game* g) {	g->getStateMachine()->changeState(new PlayState(g)); }
-
 void MainMenuState::Exit(Game* g) { g->endGame(true); }
+void MainMenuState::Load(Game* g) {}

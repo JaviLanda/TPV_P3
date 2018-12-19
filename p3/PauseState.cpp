@@ -1,4 +1,5 @@
 #include "PauseState.h"
+#include "MainMenuState.h"
 
 PauseState::PauseState(Game* g) : GameState(g) {
 	app = g;
@@ -21,3 +22,10 @@ bool PauseState::OnExit() {
 	cout << "Saliendo del PauseState" << endl;
 	return true;
 }
+
+void PauseState::Menu(Game* g) {
+	g->getStateMachine()->popState();
+	g->getStateMachine()->changeState(new MainMenuState(g)); 
+}
+void PauseState::Save(Game* g) { /*g->getStateMachine()->changeState(new MainMenuState(g));*/ }
+void PauseState::Continue(Game* g) { g->getStateMachine()->popState(); }

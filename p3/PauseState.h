@@ -12,7 +12,7 @@ public:
 	virtual bool OnExit();
 
 private:
-	static void Menu(Game* juego) { /*juego->stateMachine->changeState(new MainMenuState(juego));*/ }
-	static void Continue(Game* juego) { /*juego->getStateMachine()->popState();*/ }
-	static void Save(Game* juego) {}
+	static void Menu(Game* g);
+	static void Continue(Game* g);
+	static void Save(Game* g);
 };

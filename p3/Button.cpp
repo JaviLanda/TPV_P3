@@ -1,7 +1,6 @@
 #include "Button.h"
 
 Button::Button(Game* juego, Game::Textures_T text, int x, int y, CallBackOnClick* cb) {
-
 	pApp = juego;
 
 	ptext = pApp->getText(text);
@@ -31,7 +30,6 @@ bool Button::handleEvent(SDL_Event& e) {
 		
 		if (SDL_PointInRect(&p, &r)) {
 			callB(pApp);
-			cout << "Pulsado";
 			handle = true;
 		}
 	}

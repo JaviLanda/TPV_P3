@@ -13,5 +13,5 @@ public:
 
 private:
 	static void Menu(Game* g);
-	static void Exit(Game* g) { /*game->funcion de salir de juego    juego->onExit();*/ }
+	static void Exit(Game* g);
 };

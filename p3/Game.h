@@ -38,8 +38,8 @@ public:
 	enum Textures_T {	TBrick, TPaddle, TBall, TSide, TTopSide, TReward, 
 						TButtonPlay, TButtonExit, TButtonLoad, TButtonMenu,
 						TButtonContinue, TButtonSave};
-	Texture* getText(Textures_T et) const { return nTexturas[et]; }
 
+	Texture* getText(Textures_T et) const { return nTexturas[et]; }
 	SDL_Renderer* getRend() { return renderer; }
 	SDL_Window* getWin() { return window; }
 	GameStateMachine* getStateMachine() { return stateMachine; }

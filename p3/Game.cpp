@@ -4,6 +4,8 @@
 #include "MainMenuState.h"
 #include "PlayState.h"
 
+
+//--------Constructora------------
 Game::Game() {
 	initSDL();
 	initTextures();
@@ -12,9 +14,30 @@ Game::Game() {
 	stateMachine->pushState(new MainMenuState(this));
 }
 
+//----------Destructoras------------
 Game::~Game() {
 	closeSDL();
 	destroyTextures();
+
+	delete stateMachine;
+	stateMachine = nullptr;
+}
+
+void Game::destroyTextures() {
+	for (auto i : nTexturas) {
+		delete i;
+		i = nullptr;
+	}
+}
+
+void Game::closeSDL() {
+	SDL_DestroyRenderer(renderer);
+	renderer = nullptr;
+
+	SDL_DestroyWindow(window);
+	window = nullptr;
+
+	SDL_Quit();
 }
 
 //--------------------------------------------Inicializacion de Objetos--------------------------------------------
@@ -61,11 +84,10 @@ void Game::initTextures() {
 }
 
 //-------------Run------------
-
 void Game::run() {
 	Uint32 MSxUpdate = 120;
-	//cout << "Play \n" << endl;
 	Uint32 lastUpdate = SDL_GetTicks();
+
 	while (!end) {
 		if (SDL_GetTicks() - lastUpdate >= MSxUpdate) {//while(elapsed >= MSxUpdate)
 			handleEvents();
@@ -73,9 +95,6 @@ void Game::run() {
 			render();
 			lastUpdate = SDL_GetTicks();
 		}
-		//stateMachine->currentState()->update();
-		//stateMachine->currentState()->render();
-		//stateMachine->currentState()->handleEvent();
 	}
 }
 
@@ -83,12 +102,24 @@ void Game::run() {
 void Game::handleEvents() {
 	SDL_Event e;
 
-	//stateMachine->currentState()->handleEvent(e);
-
-	//No entra aqui :(
-	while (SDL_PollEvent(&e) && !exit) {
-		if (e.type == SDL_QUIT)	end = true;
-		else stateMachine->currentState()->handleEvent(e);
+	while (SDL_PollEvent(&e) && !end) {
+		switch (e.type)	{
+		case SDL_KEYDOWN:
+			switch (e.key.keysym.sym) { //Hacer en este switch las llamadas desde teclas generales
+			case SDLK_ESCAPE: //Para salir con esc
+				end = true;
+				break;
+			default:
+				break;
+			}
+			break;
+		case SDL_QUIT:
+			end = true;
+			break;
+		default:
+			break;
+		}
+		if (e.type != SDL_QUIT)	stateMachine->currentState()->handleEvent(e);
 	}
 }
 
@@ -102,21 +133,4 @@ void Game::render() {
 	SDL_RenderClear(renderer); //Limpiamos pantalla
 	stateMachine->currentState()->render(); //Preparamos el dibujado de los objetos
 	SDL_RenderPresent(renderer); //Dibujamos
-}
-
-void Game::destroyTextures() {
-	for (auto i : nTexturas) {
-		delete i;
-		i = nullptr;
-	}
-}
-
-void Game::closeSDL() {
-	SDL_DestroyRenderer(renderer);
-	renderer = nullptr;
-
-	SDL_DestroyWindow(window);
-	window = nullptr;
-
-	SDL_Quit();
 }
