@@ -85,7 +85,7 @@ void Game::initTextures() {
 
 //-------------Run------------
 void Game::run() {
-	Uint32 MSxUpdate = 120;
+	Uint32 MSxUpdate = 10;
 	Uint32 lastUpdate = SDL_GetTicks();
 
 	while (!end) {

@@ -10,5 +10,6 @@ public:
 	virtual void update() = 0;
 	virtual bool handleEvent(SDL_Event & e) = 0;
 
-	Game* pApp = nullptr;
+	GameState* pState = nullptr;
+	Game* pGame = nullptr;
 };

@@ -2,8 +2,6 @@
 #include "Texture.h"
 #include "GameObject.h"
 
-class Game;
-
 class Button : public GameObject {
 public:
 	typedef void CallBackOnClick(Game* game);

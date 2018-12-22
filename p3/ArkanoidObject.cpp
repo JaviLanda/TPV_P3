@@ -1,4 +1,5 @@
 #include "ArkanoidObject.h"
+#include "GameState.h"
 
 ArkanoidObject::ArkanoidObject(SDL_Renderer* r, Texture* text) : GameObject() {
 	texture = text;

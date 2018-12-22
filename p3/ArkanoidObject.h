@@ -11,11 +11,13 @@ public:
 
 	virtual void render();
 	virtual void update() {};
-	bool handleEvent(SDL_Event& e) { return true; }
-
+	//virtual bool handleEvent(SDL_Event& e) {}
+	virtual bool handleEvent(SDL_Event & e) { return true; }	//Esto esta mal, tiene que llamar a los hijos y no lo hace
+	
 	virtual void loadFromFile(ifstream& f);
 	virtual void saveToFile(fstream& f);
 	virtual SDL_Rect getRect() { return destRect; }
+
 	bool getActive() { return active; }
 	void setActive(bool a) { active = a; }
 

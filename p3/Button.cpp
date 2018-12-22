@@ -1,9 +1,9 @@
 #include "Button.h"
 
 Button::Button(Game* juego, Game::Textures_T text, int x, int y, CallBackOnClick* cb) {
-	pApp = juego;
+	pGame = juego;
 
-	ptext = pApp->getText(text);
+	ptext = pGame->getText(text);
 
 	callB = cb;
 
@@ -29,7 +29,7 @@ bool Button::handleEvent(SDL_Event& e) {
 		SDL_Rect r = { rect.x,rect.y, rect.w, rect.h };
 		
 		if (SDL_PointInRect(&p, &r)) {
-			callB(pApp);
+			callB(pGame);
 			handle = true;
 		}
 	}

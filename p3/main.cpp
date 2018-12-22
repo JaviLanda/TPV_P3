@@ -19,6 +19,6 @@ int main(int argc, char* argv[]) {
 		cout << error << endl;
 	}
 
-	system("pause");
+	//system("pause");
 	return 0;
 }

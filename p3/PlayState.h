@@ -1,16 +1,27 @@
 #pragma once
 #include "GameState.h"
+
 #include "BlockMap.h"
+#include "Ball.h"
+#include "Paddle.h"
+#include "Wall.h"
+#include "RewardX1.h"
+#include "RewardX2.h"
+#include "RewardX3.h"
+#include "RewardX4.h"
 
 const uint NUM_MAPS = 3;
 const uint WALL_WIDTH = 40;
-/*
-const uint PADDLE_MOVE = 5;
 const uint BALL_SIZE = 25;
+const uint PADDLE_MOVE = 5;
 const uint REWARD_W = 30;
 const uint REWARD_H = 20;
 const uint REWARD_CHANCE = 5;
-*/
+
+
+//Constantes de posiciones de los objetos
+const Vector2D POS_WALL_L_ROOF = Vector2D(0, 0);
+const Vector2D POS_WALL_R = Vector2D(WIN_WIDTH - WALL_WIDTH, 0);
 
 const string maps[NUM_MAPS] = {
 	{ "../images/level01.ark" },
@@ -21,18 +32,41 @@ const string maps[NUM_MAPS] = {
 class PlayState : public GameState {
 public:
 	PlayState(Game* game);
+	virtual ~PlayState();
 
-	/*
-	virtual void update() {};
-	virtual void render() {};
-	*/
+	virtual void update();
+	//virtual void render() {};
 	virtual bool handleEvent(SDL_Event& e);
 
 	virtual bool OnEnter();
 	virtual bool OnExit();
 
+	//Destructora
+	void deleteObjects();
+
+	//Colisiones
+	bool collidesBall(const SDL_Rect& rect, const Vector2D& vel, Vector2D& collVector);
+	bool collidesReward(const SDL_Rect& rect);
+
+	//Variados
+	void createReward(const SDL_Rect& rect);
+	void powerUp(int type);
+	void addLife() { vidas++; }
+	void pierdeVida();
+	void nextLevel();
+	void setLevel(bool b) { nivel = b; }
+
+	//Guardar y cargar
+	//void save();
+	//void load();
+
 protected:
 	SDL_Renderer *rend = nullptr;
+	list<GameObject*> killObjects;
+
+	bool nivel = false;
+	bool win = false;
+	bool lose = false;
 
 	int puntuacion = 0;
 	int vidas = 0;
