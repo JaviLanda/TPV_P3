@@ -19,7 +19,7 @@ public:
 
 	virtual void update();
 	virtual void render();
-	virtual bool handleEvent(SDL_Event &e);
+	virtual void handleEvents(SDL_Event &e);
 
 	virtual bool OnEnter() = 0;
 	virtual bool OnExit() = 0;

@@ -119,7 +119,7 @@ void Game::handleEvents() {
 		default:
 			break;
 		}
-		if (e.type != SDL_QUIT)	stateMachine->currentState()->handleEvent(e);
+		if (e.type != SDL_QUIT)	stateMachine->currentState()->handleEvents(e);
 	}
 }
 

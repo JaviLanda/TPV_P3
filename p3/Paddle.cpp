@@ -92,7 +92,7 @@ void Paddle::respawn() {
 	destRect.w = w;
 }
 
-bool Paddle::handleEvent(SDL_Event event) {
+bool Paddle::handleEvent(SDL_Event& event) {
 	bool b = false;
 	switch (event.type) {
 	case SDL_KEYDOWN:

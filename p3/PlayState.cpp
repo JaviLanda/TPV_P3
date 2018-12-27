@@ -45,8 +45,8 @@ void PlayState::initMap() {
 }
 
 void PlayState::createReward(const SDL_Rect &rect) {
-	int aux = rand() % REWARD_CHANCE;
-	//int aux = 0;
+	//int aux = rand() % REWARD_CHANCE;
+	int aux = 0;
 	if (aux == 0) {
 		int r = rand() % 4;
 		switch (r) {
@@ -92,14 +92,14 @@ void PlayState::update() {
 	while (it != objects.end()) {
 		auto next = it;
 		++next;
-		if ((*it)->getActive()) (*it)->update();
+		if (static_cast<ArkanoidObject*>(*it)->getActive()) (*it)->update();
 		else {
 			killObjects.push_back(*it);
 			objects.remove(*it);
 		}
 		it = next;
-	}
-	*/
+	}*/
+	
 }
 
 /*
@@ -124,7 +124,7 @@ SDL_RenderPresent(renderer);
 */
 
 //--------------------HANDLE_EVENTS------------
-bool PlayState::handleEvent(SDL_Event& e) {
+void PlayState::handleEvents(SDL_Event& e) {
 	switch (e.type) {
 	case SDL_KEYDOWN:
 		switch (e.key.keysym.sym) {
@@ -139,8 +139,8 @@ bool PlayState::handleEvent(SDL_Event& e) {
 		}
 	}
 
-	GameState::handleEvent(e);
-	return true;
+	GameState::handleEvents(e);
+	//return true;
 }
 
 //--------------------------------------------------------------Colisiones-------------------------------------------------------
@@ -197,7 +197,7 @@ bool PlayState::collidesReward(const SDL_Rect &rect) {
 //----------------------------------------------Diversos-----------------------------------------
 //Siguiente nivel
 void PlayState::nextLevel() {
-	if (level < 2) {
+	if (level < 3) {
 		nivel = false;
 		level++;
 

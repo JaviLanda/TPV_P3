@@ -11,7 +11,7 @@ public:
 	Texture* ptext;
 	void update() {}
 	void render();
-	bool handleEvent(SDL_Event& e);
+	virtual bool handleEvent(SDL_Event& e);
 
 protected:
 	CallBackOnClick* callB;

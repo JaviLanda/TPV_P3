@@ -7,7 +7,7 @@ public:
 	virtual ~Paddle();
 
 	void update();
-	bool handleEvent(SDL_Event event);
+	bool handleEvent(SDL_Event& event);
 
 	bool collides(const SDL_Rect& r);
 	bool collidesBall(const SDL_Rect& r, Vector2D& collVector); //Comprobacion de choque con la pelota

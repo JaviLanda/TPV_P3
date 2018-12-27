@@ -10,7 +10,7 @@ void GameState::render() {
 	for (GameObject* c : objects) c->render();
 }
 
-bool GameState::handleEvent(SDL_Event &e) {
+void GameState::handleEvents(SDL_Event &e) {
 	bool handled = false;
 	auto it = objects.begin();
 	
@@ -18,8 +18,7 @@ bool GameState::handleEvent(SDL_Event &e) {
 		if ((*it)->handleEvent(e)) handled = true;
 		else ++it;
 	}
-
-	return handled;
+	//return handled;
 }
 
 GameState::~GameState() {
