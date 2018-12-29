@@ -1,4 +1,7 @@
 #pragma once
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include "GameState.h"
 
 #include "BlockMap.h"
@@ -36,7 +39,7 @@ public:
 	virtual ~PlayState();
 
 	virtual void update();
-	//virtual void render() {};
+	virtual void render() ;
 	virtual void handleEvents(SDL_Event& e);
 
 	virtual bool OnEnter();
@@ -59,9 +62,11 @@ public:
 
 	//Guardar y cargar
 	void saveBool(bool b) { s = b; }
+	void loadBool(bool b) { l = b; }
 	void save();
 	void load();
 	void initObjectsFromFile(ifstream& f);
+
 
 protected:
 	SDL_Renderer *rend = nullptr;
@@ -71,7 +76,7 @@ protected:
 	bool win = false;
 	bool lose = false;
 
-	int puntuacion = 0;
+	
 	int vidas = 0;
 	int level = 0;
 
@@ -84,12 +89,11 @@ private:
 
 	//Variables para la carga
 	bool s = false;
+	bool l = false;
+	bool firstUpdate = false;
 	int numRewards = 0, numLin;
 	int code = 0;
 	int tempCode = 0;
 
-	//Atributos textura/fuente de la vida y el score
-	Texture* tScore;
-	//SDL_Color red = { 255, 0, 0 }; //The color of the font
-	TTF_Font* font;
+	
 };

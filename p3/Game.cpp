@@ -67,7 +67,7 @@ bool Game::initSDL() {
 			}
 		}
 	}
-	//if (TTF_Init() < 0)	throw SDLError("Error al cargar la librería TTF");
+	if (TTF_Init() < 0)	throw SDLError("Error al cargar la librería TTF");
 
 	return load;
 }
@@ -81,6 +81,9 @@ void Game::initTextures() {
 			cout << "Textures could not be created! \nSDL_Error: " << SDL_GetError() << '\n';
 		}
 	}
+	tScore = new Texture(renderer);
+	font = TTF_OpenFont("../images/pixel.ttf", 20);
+	if (font == nullptr) throw SDLError(TTF_GetError());
 }
 
 //-------------Run------------

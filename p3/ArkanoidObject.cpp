@@ -7,7 +7,7 @@ ArkanoidObject::ArkanoidObject(SDL_Renderer* r, Texture* text) : GameObject() {
 	active = true;
 }
 
-ArkanoidObject::~ArkanoidObject() {}
+//ArkanoidObject::~ArkanoidObject() {}
 
 void ArkanoidObject::render() {
 	if(active) texture->renderFrame(destRect, 0, 0);

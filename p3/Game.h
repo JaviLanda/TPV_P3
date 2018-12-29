@@ -12,6 +12,7 @@
 const uint NUM_TEXTURES = 12;
 const uint WIN_WIDTH = 800;
 const uint WIN_HEIGHT = 600;
+const string FONT = "";
 
 const string IMAGES_PATH = "../images/";
 
@@ -43,9 +44,18 @@ public:
 	SDL_Renderer* getRend() { return renderer; }
 	SDL_Window* getWin() { return window; }
 	GameStateMachine* getStateMachine() { return stateMachine; }
+	int getScore() { return puntuacion; }
+	void addScore() { puntuacion++; }
+	void setScore(int p) { puntuacion = p; }
 
 	void endGame(bool b) { end = b; }
 	void run();
+
+	//Atributos textura/fuente de la vida y el score
+	Texture* tScore;
+	SDL_Color red = { 255, 0, 0 }; //The color of the font
+	TTF_Font* font;
+	SDL_Rect scoreRect;
 
 protected:
 	SDL_Renderer *renderer = nullptr;
@@ -63,6 +73,10 @@ protected:
 	void handleEvents();
 
 	Texture* nTexturas[NUM_TEXTURES];
+
+
+
 private:
 	bool end = false;
+	int puntuacion = 0;
 };

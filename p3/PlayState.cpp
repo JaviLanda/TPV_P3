@@ -8,7 +8,11 @@ PlayState::PlayState(Game* g) : GameState(g) {
 
 	vidas = 3;
 
-	initObjects();
+	firstUpdate = true;
+	app->scoreRect.x = (WIN_WIDTH / 2) + 50;
+	app->scoreRect.y = -5;
+	app->scoreRect.w = 300;
+	app->scoreRect.h = 50;
 }
 
 bool PlayState::OnEnter() {
@@ -74,35 +78,43 @@ void PlayState::createReward(const SDL_Rect &rect) {
 
 //------------------UPDATE-----------
 void PlayState::update() {
-
+	if (firstUpdate) {
+		if (!l) { initObjects(); }
+		else load();
+		firstUpdate = false;
+	}
+	
+	
 	GameState::update();
+
 
 	//Comprobacion de no mas bloques
 	if (static_cast<BlockMap*>(*mapIt)->getNumBlocks() == 0) nextLevel();
 
-	if (win || lose) { app->getStateMachine()->changeState(new EndState(app)); }
+	
 	if (s) { save(); }
+	if (nivel) nextLevel();
+
+	if (win || lose) {
+		app->getStateMachine()->changeState(new EndState(app));
+	}
 }
 
-/*
+
 //--------------------RENDER---------------
-void Game::render() const {
-SDL_RenderClear(renderer); //Eliminamos lo que hay en pantalla
-//Render de cada objeto
-for (auto it = objects.begin(); it != objects.end(); it++) {
-(*it)->render();
+void PlayState::render() {
+	
+	GameState::render();
+	
+	//Dibujado de la puntuacion
+	stringstream strm;
+	strm << "Score: " << app->getScore() << "                " << "Vidas: " << vidas;
+	app->tScore->loadFont(rend, app->font, strm.str().c_str(), app->red);
+
+	app->tScore->render(app->scoreRect);
+
 }
 
-//Dibujado de la puntuacion
-stringstream strm;
-strm << "Score: " << puntuacion << "                " << "Vidas: " << vidas;
-tScore->loadFont(renderer, font, strm.str().c_str(), red);
-
-tScore->render(scoreRect);
-
-SDL_RenderPresent(renderer);
-}
-*/
 
 //--------------------HANDLE_EVENTS------------
 void PlayState::handleEvents(SDL_Event& e) {
@@ -159,7 +171,7 @@ bool PlayState::collidesBall(const SDL_Rect& rect, const Vector2D& vel, Vector2D
 		if (block->getActive()) {
 			static_cast<BlockMap*>(*mapIt)->ballHitsBlock(block);
 			c = true;
-			puntuacion++;
+			app->addScore();
 			createReward(block->getRect());
 		}
 	}
@@ -178,7 +190,7 @@ bool PlayState::collidesReward(const SDL_Rect &rect) {
 //----------------------------------------------Diversos-----------------------------------------
 //Siguiente nivel
 void PlayState::nextLevel() {
-	if (level < 3) {
+	if (level < 2) {
 		nivel = false;
 		level++;
 
@@ -219,7 +231,7 @@ void PlayState::powerUp(int type) {
 	static_cast<Paddle*>(*paddleIt)->powerUp(type);
 }
 
-/*
+
 //----------------------------Cargar--------------------------------
 void PlayState::load() {
 	ifstream f;
@@ -239,7 +251,7 @@ void PlayState::load() {
 		}
 		f >> numLin;
 		if (tempCode != code) {
-			for (int i = 0; i < numLin; i++) {
+			for (int i = 0; i < numLin+1; i++) {
 				f.ignore(INT_MAX, '\n');
 			}
 		}
@@ -256,7 +268,10 @@ void PlayState::load() {
 
 void PlayState::initObjectsFromFile(ifstream& f) {
 	//Cargamos la vida y la puntuacion
-	f >> vidas >> puntuacion;
+	int tPuntos =0;
+	f >> vidas >> tPuntos;
+
+	app->setScore(tPuntos);
 
 	//Iniciamos los objetos
 	blockMap = new BlockMap(rend, app->getText(Game::TBrick));
@@ -273,7 +288,7 @@ void PlayState::initObjectsFromFile(ifstream& f) {
 
 	//Cargamos los valores de los objetos del fichero
 	for (auto it = objects.begin(); it != objects.end(); it++) {
-		(*it)->loadFromFile(f);
+		static_cast<ArkanoidObject*>(*it)->loadFromFile(f);
 	}
 	//Fallan los objetos Wall
 	//
@@ -284,15 +299,15 @@ void PlayState::initObjectsFromFile(ifstream& f) {
 	for (int i = 0; i < numRewards; i++) {
 		objects.push_back(new Reward(rend, app->getText(Game::TReward), 0, 0, this));
 		auto it = --objects.end();
-		(*it)->loadFromFile(f);
+		static_cast<ArkanoidObject*>(*it)->loadFromFile(f);
 	}
 }
-*/
+
 
 //--------------------------Guardar---------------------------
 void PlayState::save() {
 	//Añadir comprobacion de codigo en caso de que ya exista una partida guardada con ese codigo.
-
+	int tPuntos = app->getScore();
 	fstream f;
 	f.open(SAVEFILE, fstream::out | fstream::in | fstream::app);
 
@@ -306,7 +321,7 @@ void PlayState::save() {
 	cout << "Introduce codigo de partida: ";
 	cin >> code;
 	f << code << " " << nRow << endl;
-	f << vidas << " " << puntuacion << endl;
+	f << vidas << " " << tPuntos << endl;
 
 	for (auto it = objects.begin(); it != objects.end(); it++) {
 		static_cast<ArkanoidObject*>(*it)->saveToFile(f);

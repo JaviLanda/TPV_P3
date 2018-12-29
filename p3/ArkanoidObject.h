@@ -7,7 +7,7 @@ class ArkanoidObject : public GameObject {
 public:
 	ArkanoidObject() {};
 	ArkanoidObject(SDL_Renderer* r, Texture* text);
-	virtual ~ArkanoidObject();
+	//virtual ~ArkanoidObject();
 
 	virtual void render();
 	virtual void update() {};

@@ -27,4 +27,9 @@ void MainMenuState::initBoton() {
 
 void MainMenuState::Play(Game* g) {	g->getStateMachine()->changeState(new PlayState(g)); }
 void MainMenuState::Exit(Game* g) { g->endGame(true); }
-void MainMenuState::Load(Game* g) {}
+void MainMenuState::Load(Game* g) {
+	g->getStateMachine()->changeState(new PlayState(g));
+	PlayState* ps = dynamic_cast<PlayState*>(g->getStateMachine()->currentState());
+	ps->loadBool(true);
+
+}
