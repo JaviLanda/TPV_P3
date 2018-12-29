@@ -18,6 +18,7 @@ const uint REWARD_W = 30;
 const uint REWARD_H = 20;
 const uint REWARD_CHANCE = 5;
 
+const string SAVEFILE = "../images/save.ark";
 
 //Constantes de posiciones de los objetos
 const Vector2D POS_WALL_L_ROOF = Vector2D(0, 0);
@@ -57,8 +58,10 @@ public:
 	void setLevel(bool b) { nivel = b; }
 
 	//Guardar y cargar
-	//void save();
-	//void load();
+	void saveBool(bool b) { s = b; }
+	void save();
+	void load();
+	void initObjectsFromFile(ifstream& f);
 
 protected:
 	SDL_Renderer *rend = nullptr;
@@ -78,4 +81,15 @@ private:
 
 	BlockMap* blockMap;
 	list<GameObject*>::iterator mapIt, paddleIt, ballIt, lastIt;
+
+	//Variables para la carga
+	bool s = false;
+	int numRewards = 0, numLin;
+	int code = 0;
+	int tempCode = 0;
+
+	//Atributos textura/fuente de la vida y el score
+	Texture* tScore;
+	//SDL_Color red = { 255, 0, 0 }; //The color of the font
+	TTF_Font* font;
 };

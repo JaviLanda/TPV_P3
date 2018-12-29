@@ -80,26 +80,8 @@ void PlayState::update() {
 	//Comprobacion de no mas bloques
 	if (static_cast<BlockMap*>(*mapIt)->getNumBlocks() == 0) nextLevel();
 
-	if (win || lose) { 
-		app->getStateMachine()->changeState(new EndState(app)); 
-	}
-
-	//if (nivel) nextLevel();
-	//if (level > 2) win = true;
-
-	/*
-	auto it = objects.begin();
-	while (it != objects.end()) {
-		auto next = it;
-		++next;
-		if (static_cast<ArkanoidObject*>(*it)->getActive()) (*it)->update();
-		else {
-			killObjects.push_back(*it);
-			objects.remove(*it);
-		}
-		it = next;
-	}*/
-	
+	if (win || lose) { app->getStateMachine()->changeState(new EndState(app)); }
+	if (s) { save(); }
 }
 
 /*
@@ -120,7 +102,6 @@ tScore->render(scoreRect);
 
 SDL_RenderPresent(renderer);
 }
-
 */
 
 //--------------------HANDLE_EVENTS------------
@@ -240,101 +221,102 @@ void PlayState::powerUp(int type) {
 
 /*
 //----------------------------Cargar--------------------------------
-void Game::load() {
-ifstream f;
-f.open(SAVEFILE);
+void PlayState::load() {
+	ifstream f;
+	f.open(SAVEFILE);
 
-bool end = false;
-int tempCode = 0;
-cout << "Introduce codigo de partida: ";
-cin >> tempCode;
+	bool end = false;
+	int tempCode = 0;
+	cout << "Introduce codigo de partida: ";
+	cin >> tempCode;
 
-while (!end) {
-f >> code;
-if (f.fail()) {
-cout << "No existe esa partida." << endl;
-system("pause");
-end = true;
-}
-f >> numLin;
-if (tempCode != code) {
-for (int i = 0; i < numLin; i++) {
-f.ignore(INT_MAX, '\n');
-}
-}
-else {
-//cout << "Lo he encontrado pavo";
-//Lectura
-initObjectsFromFile(f);
-end = true;
-}
-}
+	while (!end) {
+		f >> code;
+		if (f.fail()) {
+			cout << "No existe esa partida." << endl;
+			system("pause");
+			end = true;
+		}
+		f >> numLin;
+		if (tempCode != code) {
+			for (int i = 0; i < numLin; i++) {
+				f.ignore(INT_MAX, '\n');
+			}
+		}
+		else {
+			//cout << "Lo he encontrado pavo";
+			//Lectura
+			initObjectsFromFile(f);
+			end = true;
+		}
+	}
 
-f.close();
-}
-
-void Game::initObjectsFromFile(ifstream& f) {
-//Cargamos la vida y la puntuacion
-f >> vidas >> puntuacion;
-
-//Iniciamos los objetos
-blockMap = new BlockMap(renderer, nTexturas[TBrick]);
-objects.push_front(blockMap);
-mapIt = objects.begin();
-objects.push_back(new Ball(renderer, nTexturas[TBall], this));
-ballIt = --(objects.end());
-objects.push_back(new Paddle(renderer, nTexturas[TPaddle], this));
-paddleIt = --(objects.end());
-objects.push_back(new Wall(renderer, nTexturas[TSide], POS_WALL_L_ROOF, false));
-objects.push_back(new Wall(renderer, nTexturas[TSide], POS_WALL_R, false));
-objects.push_back(new Wall(renderer, nTexturas[TTopSide], POS_WALL_L_ROOF, true));
-lastIt = --(objects.end());
-
-//Cargamos los valores de los objetos del fichero
-for (auto it = objects.begin(); it != objects.end(); it++) {
-(*it)->loadFromFile(f);
-}
-//Fallan los objetos Wall
-//
-//
-
-//Calculamos y añadimos los posibles rewards
-numRewards = numLin - 7 - blockMap->numRow();
-for (int i = 0; i < numRewards; i++) {
-objects.push_back(new Reward(renderer, nTexturas[TReward], 0, 0, this));
-auto it = --objects.end();
-(*it)->loadFromFile(f);
-}
+	f.close();
 }
 
-//--------------------------Guardar---------------------------
-void Game::save() {
+void PlayState::initObjectsFromFile(ifstream& f) {
+	//Cargamos la vida y la puntuacion
+	f >> vidas >> puntuacion;
 
-//Añadir comprobacion de codigo en caso de que ya exista una partida guardada con ese codigo.
+	//Iniciamos los objetos
+	blockMap = new BlockMap(rend, app->getText(Game::TBrick));
+	objects.push_front(blockMap);
+	mapIt = objects.begin();
+	objects.push_back(new Ball(rend, app->getText(Game::TBall), this));
+	ballIt = --(objects.end());
+	objects.push_back(new Paddle(rend, app->getText(Game::TPaddle), this));
+	paddleIt = --(objects.end());
+	objects.push_back(new Wall(rend, app->getText(Game::TSide), POS_WALL_L_ROOF, false));
+	objects.push_back(new Wall(rend, app->getText(Game::TSide), POS_WALL_R, false));
+	objects.push_back(new Wall(rend, app->getText(Game::TTopSide), POS_WALL_L_ROOF, true));
+	lastIt = --(objects.end());
 
-fstream f;
-f.open(SAVEFILE, fstream::out | fstream::in | fstream::app);
+	//Cargamos los valores de los objetos del fichero
+	for (auto it = objects.begin(); it != objects.end(); it++) {
+		(*it)->loadFromFile(f);
+	}
+	//Fallan los objetos Wall
+	//
+	//
 
-int nRow = static_cast<BlockMap*>(*mapIt)->numRow();
-nRow++;
-
-for (auto it = objects.begin(); it != objects.end(); it++) {
-nRow++;
-}
-
-cout << "Introduce codigo de partida: ";
-cin >> code;
-f << code << " " << nRow << endl;
-f << vidas << " " << puntuacion << endl;
-
-for (auto it = objects.begin(); it != objects.end(); it++) {
-(*it)->saveToFile(f);
-nRow++;
-}
-
-f.close();
+	//Calculamos y añadimos los posibles rewards
+	numRewards = numLin - 7 - blockMap->numRow();
+	for (int i = 0; i < numRewards; i++) {
+		objects.push_back(new Reward(rend, app->getText(Game::TReward), 0, 0, this));
+		auto it = --objects.end();
+		(*it)->loadFromFile(f);
+	}
 }
 */
+
+//--------------------------Guardar---------------------------
+void PlayState::save() {
+	//Añadir comprobacion de codigo en caso de que ya exista una partida guardada con ese codigo.
+
+	fstream f;
+	f.open(SAVEFILE, fstream::out | fstream::in | fstream::app);
+
+	int nRow = static_cast<BlockMap*>(*mapIt)->numRow();
+	nRow++;
+
+	for (auto it = objects.begin(); it != objects.end(); it++) {
+		nRow++;
+	}
+
+	cout << "Introduce codigo de partida: ";
+	cin >> code;
+	f << code << " " << nRow << endl;
+	f << vidas << " " << puntuacion << endl;
+
+	for (auto it = objects.begin(); it != objects.end(); it++) {
+		static_cast<ArkanoidObject*>(*it)->saveToFile(f);
+		nRow++;
+	}
+
+	f.close();
+
+	saveBool(false);
+}
 
 //---------------------------------------------Destructoras------------------------------------------
 PlayState::~PlayState() {

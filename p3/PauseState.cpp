@@ -1,5 +1,6 @@
 #include "PauseState.h"
 #include "MainMenuState.h"
+#include "PlayState.h"
 
 PauseState::PauseState(Game* g) : GameState(g) {
 	app = g;
@@ -27,5 +28,11 @@ void PauseState::Menu(Game* g) {
 	g->getStateMachine()->popState();
 	g->getStateMachine()->changeState(new MainMenuState(g)); 
 }
-void PauseState::Save(Game* g) { /*g->getStateMachine()->changeState(new MainMenuState(g));*/ }
+
+void PauseState::Save(Game* g) { 
+	g->getStateMachine()->popState();
+	PlayState* ps = dynamic_cast<PlayState*>(g->getStateMachine()->currentState());
+	ps->saveBool(true);
+}
+
 void PauseState::Continue(Game* g) { g->getStateMachine()->popState(); }
