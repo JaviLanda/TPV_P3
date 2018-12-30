@@ -2,8 +2,6 @@
 
 #include "MovingObject.h"
 
-//class Game;
-
 class Ball : public MovingObject {
 public:
 	Ball() {};
@@ -13,11 +11,12 @@ public:
 	virtual void update();
 	virtual void loadFromFile(ifstream& f);
 	virtual void saveToFile(fstream& f);
+
 	void respawn();
 
 private:
-	int velLimit = 2;
+	int initV = 2;
 	bool resp = false;
 
-	Vector2D initVel = Vector2D(velLimit, -velLimit);
+	Vector2D initVel = Vector2D(initV, -initV);
 };

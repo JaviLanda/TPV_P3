@@ -4,7 +4,6 @@
 #include "MainMenuState.h"
 #include "PlayState.h"
 
-
 //--------Constructora------------
 Game::Game() {
 	initSDL();
@@ -28,6 +27,9 @@ void Game::destroyTextures() {
 		delete i;
 		i = nullptr;
 	}
+
+	delete tScore;
+	tScore = nullptr;
 }
 
 void Game::closeSDL() {

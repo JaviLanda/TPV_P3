@@ -7,12 +7,11 @@ class ArkanoidObject : public GameObject {
 public:
 	ArkanoidObject() {};
 	ArkanoidObject(SDL_Renderer* r, Texture* text);
-	//virtual ~ArkanoidObject();
+	virtual ~ArkanoidObject() {}
 
 	virtual void render();
 	virtual void update() {};
-	//virtual bool handleEvent(SDL_Event& e) {}
-	virtual bool handleEvent(SDL_Event & e) { return 0; }	//Esto esta mal, tiene que llamar a los hijos y no lo hace
+	virtual bool handleEvent(SDL_Event & e) { return 0; }
 	
 	virtual void loadFromFile(ifstream& f);
 	virtual void saveToFile(fstream& f);
@@ -32,6 +31,6 @@ protected:
 	Texture* texture = nullptr;
 	SDL_Renderer* renderer = nullptr;
 
-	bool active;
+	bool active = true;
 private:
 };

@@ -66,6 +66,8 @@ public:
 	void save();
 	void load();
 	void initObjectsFromFile(ifstream& f);
+	bool searchSaveGame();
+	bool searchGame(int c);
 
 
 protected:

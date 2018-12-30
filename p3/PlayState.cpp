@@ -1,8 +1,12 @@
+#include <time.h>
+
 #include "PlayState.h"
 #include "PauseState.h"
 #include "EndState.h"
 
 PlayState::PlayState(Game* g) : GameState(g) {
+	srand(time(0));
+
 	app = g;
 	rend = g->getRend();
 
@@ -49,26 +53,21 @@ void PlayState::initMap() {
 }
 
 void PlayState::createReward(const SDL_Rect &rect) {
-	//int aux = rand() % REWARD_CHANCE;
-	int aux = 0;
+	int aux = rand() % REWARD_CHANCE;
 	if (aux == 0) {
 		int r = rand() % 4;
 		switch (r) {
 		case 0:
 			objects.push_back(new RewardX1(rend, app->getText(Game::TReward), rect.x, rect.y, this));
-			//static_cast<RewardX1*>(objects.back())->setIt(--(objects.end()));
 			break;
 		case 1:
 			objects.push_back(new RewardX2(rend, app->getText(Game::TReward), rect.x, rect.y, this));
-			//static_cast<RewardX2*>(objects.back())->setIt(--(objects.end()));
 			break;
 		case 2:
 			objects.push_back(new RewardX3(rend, app->getText(Game::TReward), rect.x, rect.y, this));
-			//static_cast<RewardX3*>(objects.back())->setIt(--(objects.end()));
 			break;
 		case 3:
 			objects.push_back(new RewardX4(rend, app->getText(Game::TReward), rect.x, rect.y, this));
-			//static_cast<RewardX4*>(objects.back())->setIt(--(objects.end()));
 			break;
 		default:
 			break;
@@ -83,21 +82,22 @@ void PlayState::update() {
 		else load();
 		firstUpdate = false;
 	}
-	
-	
-	GameState::update();
 
+	if (!win && !lose) {	//Comprobacion de fin de partida
 
-	//Comprobacion de no mas bloques
-	if (static_cast<BlockMap*>(*mapIt)->getNumBlocks() == 0) nextLevel();
+		GameState::update();
 
-	
-	if (s) { save(); }
-	if (nivel) nextLevel();
+		//Comprobacion de siguiente nivel
+		if (static_cast<BlockMap*>(*mapIt)->getNumBlocks() == 0) nextLevel();
+		if (nivel) nextLevel();
 
-	if (win || lose) {
+		//Comprobacion de guardado
+		if (s) { save(); }
+	}
+	else {
 		app->getStateMachine()->changeState(new EndState(app));
 	}
+	//if (win || lose) { app->getStateMachine()->changeState(new EndState(app)); }
 }
 
 
@@ -112,20 +112,22 @@ void PlayState::render() {
 	app->tScore->loadFont(rend, app->font, strm.str().c_str(), app->red);
 
 	app->tScore->render(app->scoreRect);
-
 }
-
 
 //--------------------HANDLE_EVENTS------------
 void PlayState::handleEvents(SDL_Event& e) {
 	switch (e.type) {
 	case SDL_KEYDOWN:
 		switch (e.key.keysym.sym) {
-		case SDLK_p:
+		case SDLK_p:	//Pausa
 			app->getStateMachine()->pushState(new PauseState(app));
 			break;
-		case SDLK_o:
+			//---------------CHEATS	(only programmers will know)-------------
+		case SDLK_o:	//Pasar de nivel
 			nextLevel();
+			break;
+		case SDLK_i:	//Añadir vida
+			addLife();
 			break;
 		default:
 			break;
@@ -133,7 +135,6 @@ void PlayState::handleEvents(SDL_Event& e) {
 	}
 
 	GameState::handleEvents(e);
-	//return true;
 }
 
 //--------------------------------------------------------------Colisiones-------------------------------------------------------
@@ -231,45 +232,34 @@ void PlayState::powerUp(int type) {
 	static_cast<Paddle*>(*paddleIt)->powerUp(type);
 }
 
-
 //----------------------------Cargar--------------------------------
 void PlayState::load() {
-	ifstream f;
-	f.open(SAVEFILE);
-
-	bool end = false;
-	int tempCode = 0;
 	cout << "Introduce codigo de partida: ";
 	cin >> tempCode;
 
-	while (!end) {
-		f >> code;
-		if (f.fail()) {
-			cout << "No existe esa partida." << endl;
-			system("pause");
-			end = true;
-		}
-		f >> numLin;
-		if (tempCode != code) {
-			for (int i = 0; i < numLin+1; i++) {
-				f.ignore(INT_MAX, '\n');
-			}
-		}
-		else {
-			//cout << "Lo he encontrado pavo";
-			//Lectura
-			initObjectsFromFile(f);
-			end = true;
-		}
+	if (tempCode == -1) lose = true;
+
+	while (tempCode != -1 && !searchGame(tempCode)) {
+		cout << "No existe la partida solicitada, por favor introduzca otro codigo o '-1' para salir." << endl;
+		cout << "Codigo: ";
+		cin >> tempCode;
+		if (tempCode == -1) lose = true;
 	}
+
+	ifstream f;
+	f.open(SAVEFILE);
+
+	f >> code;
+	f >> numLin;
+	initObjectsFromFile(f);
 
 	f.close();
 }
 
 void PlayState::initObjectsFromFile(ifstream& f) {
-	//Cargamos la vida y la puntuacion
-	int tPuntos =0;
-	f >> vidas >> tPuntos;
+	//Cargamos la vida, puntuacion y nivel
+	int tPuntos = 0;
+	f >> vidas >> tPuntos >> nivel;
 
 	app->setScore(tPuntos);
 
@@ -290,9 +280,6 @@ void PlayState::initObjectsFromFile(ifstream& f) {
 	for (auto it = objects.begin(); it != objects.end(); it++) {
 		static_cast<ArkanoidObject*>(*it)->loadFromFile(f);
 	}
-	//Fallan los objetos Wall
-	//
-	//
 
 	//Calculamos y añadimos los posibles rewards
 	numRewards = numLin - 7 - blockMap->numRow();
@@ -303,29 +290,69 @@ void PlayState::initObjectsFromFile(ifstream& f) {
 	}
 }
 
+//Busqueda de codigo en el archivo de guardados
+bool PlayState::searchGame(int c) {
+	ifstream f;
+	f.open(SAVEFILE);
+
+	bool end = false;
+	bool found = false;
+
+	while (!end) {
+		f >> code;
+		if (f.fail()) {
+			end = true;
+		}
+		f >> numLin;
+		if (c != code) {
+			for (int i = 0; i < numLin + 1; i++) {
+				f.ignore(INT_MAX, '\n');
+			}
+		}
+		else { //Lo encuentra!
+			end = true;
+			found = true;
+		}
+	}
+
+	f.close();
+	return found;
+}
 
 //--------------------------Guardar---------------------------
 void PlayState::save() {
+	cout << "Introduce codigo de partida: ";
+	cin >> tempCode;
+
+	while (searchGame(tempCode)) {
+		cout << "Ya existe una partida guardada con ese codigo, por favor introduce un codigo diferente." << endl;
+		cout << "Codigo: ";
+		cin >> tempCode;
+	}
+
 	//Añadir comprobacion de codigo en caso de que ya exista una partida guardada con ese codigo.
-	int tPuntos = app->getScore();
 	fstream f;
 	f.open(SAVEFILE, fstream::out | fstream::in | fstream::app);
+
+	int tPuntos = app->getScore();
 
 	int nRow = static_cast<BlockMap*>(*mapIt)->numRow();
 	nRow++;
 
 	for (auto it = objects.begin(); it != objects.end(); it++) {
-		nRow++;
+		if (static_cast<ArkanoidObject*>(*it)->getActive()) {
+			nRow++;
+		}
 	}
 
-	cout << "Introduce codigo de partida: ";
-	cin >> code;
-	f << code << " " << nRow << endl;
-	f << vidas << " " << tPuntos << endl;
+	f << tempCode << " " << nRow << endl;							//Codigo y numero_de_filas
+	f << vidas << " " << tPuntos << " " << nivel << endl;		//Vidas, puntuacion y nivel
 
 	for (auto it = objects.begin(); it != objects.end(); it++) {
-		static_cast<ArkanoidObject*>(*it)->saveToFile(f);
-		nRow++;
+		if (static_cast<ArkanoidObject*>(*it)->getActive()) {
+			static_cast<ArkanoidObject*>(*it)->saveToFile(f);
+			nRow++;
+		}
 	}
 
 	f.close();
@@ -339,6 +366,10 @@ PlayState::~PlayState() {
 }
 
 void PlayState::deleteObjects() {
+	/*for (auto o : objects) {
+		delete o;
+		o = nullptr;
+	}*/
 	for (auto i : killObjects) {
 		delete i;
 		i = nullptr;

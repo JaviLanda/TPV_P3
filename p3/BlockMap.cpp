@@ -72,7 +72,8 @@ void BlockMap::saveToFile(fstream& f) {
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < col; j++) {
 			if (map[i][j] == nullptr) f << "0" << " ";
-			else f << map[i][j]->getColor() << " ";
+			else if (map[i][j]->getActive()) f << map[i][j]->getColor() << " ";
+			else f << "0" << " ";
 		}
 		f << endl;
 	}

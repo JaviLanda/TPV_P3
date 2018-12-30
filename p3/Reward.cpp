@@ -41,12 +41,14 @@ void Reward::update() {
 }
 
 void Reward::action() {
-	if (static_cast<PlayState*>(pState)->collidesReward(destRect)) {
-		active = false;
-		static_cast<PlayState*>(pState)->powerUp(type);
-	}
-	else if (pos.getY() > WIN_HEIGHT) {
-		active = false;
+	if (active) {
+		if (static_cast<PlayState*>(pState)->collidesReward(destRect)) {
+			active = false;
+			static_cast<PlayState*>(pState)->powerUp(type);
+		}
+		else if (pos.getY() > WIN_HEIGHT) {
+			active = false;
+		}
 	}
 }
 

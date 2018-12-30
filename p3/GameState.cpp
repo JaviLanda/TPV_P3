@@ -18,7 +18,6 @@ void GameState::handleEvents(SDL_Event &e) {
 		if ((*it)->handleEvent(e)) handled = true;
 		else ++it;
 	}
-	//return handled;
 }
 
 GameState::~GameState() {

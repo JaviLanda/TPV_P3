@@ -44,11 +44,6 @@ void Ball::update() {
 			pos = prevPos + vel;
 			x = pos.getX();
 			y = pos.getY();
-			//Controlador de velocidad
-			if (vel.getX() > velLimit)			vel.setX(velLimit);
-			else if (vel.getX() < -velLimit)	vel.setX(-velLimit);
-			if (vel.getY() > velLimit)			vel.setY(velLimit);
-			else if (vel.getY() < -velLimit)	vel.setY(-velLimit);
 		} else resp = false;
 	} else {
 		pos = prevPos + vel;
@@ -69,6 +64,6 @@ void Ball::loadFromFile(ifstream& f) {
 	int vx, vy;
 	f >> vx >> vy;
 	vel = Vector2D(vx, vy);
-	velLimit = vy;
+	initV = vy;
 	ArkanoidObject::loadFromFile(f);
 }

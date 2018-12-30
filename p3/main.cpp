@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include "Game.h"
-//#include "checkML.h"
+#include "checkML.h"
 
 using namespace std;
 
@@ -19,6 +19,5 @@ int main(int argc, char* argv[]) {
 		cout << error << endl;
 	}
 
-	//system("pause");
 	return 0;
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include <sstream>
+
 #include "GameState.h"
 #include "Button.h"
 
@@ -8,6 +10,7 @@ public:
 
 	void initBoton();
 
+	virtual void render();
 	virtual bool OnEnter();
 	virtual bool OnExit();
 

@@ -26,6 +26,7 @@ void Paddle::update() { //Revisar laterales
 	if (x < WALL_WIDTH + 5 || (x + destRect.w) > WIN_WIDTH - WALL_WIDTH - 10) vel.setX(0);
 }
 
+//------------------------------------COLLISIONS-----------------------------------
 bool Paddle::collides(const SDL_Rect& r) {
 	bool hit = false;
 	if (r.x >= destRect.x && r.x <= destRect.x + destRect.w) {
@@ -60,20 +61,14 @@ bool Paddle::collidesBall(const SDL_Rect& r, Vector2D& collVector) {
 	return hit;
 }
 
+//-----------------------------------POWER UPS--------------------------
 void Paddle::powerUp(int type) {
+	givePower(type);
 	switch (type) {
-	case 0: //Alargar
-		destRect.w = w;
-		destRect.w *= 1.5;
-		break;
-	case 1: //Acortar
-		destRect.w = w;
-		destRect.w *= 0.75;
-		break;
-	case 2: //Vida extra
+	case VidaExtra: //Vida extra
 		static_cast<PlayState*>(pState)->addLife();
 		break;
-	case 3: //Pasar nivel
+	case NextLv: //Pasar nivel
 		static_cast<PlayState*>(pState)->setLevel(true);
 		break;
 	default:
@@ -81,6 +76,24 @@ void Paddle::powerUp(int type) {
 	}
 }
 
+void Paddle::givePower(int p) {
+	switch (p) {
+	case None:	//None
+		break;
+	case Big:	//Alargar
+		destRect.w = w;
+		destRect.w *= 1.5;
+		break;
+	case Small:	//Acortar
+		destRect.w = w;
+		destRect.w *= 0.75;
+		break;
+	default:
+		break;
+	}
+}
+
+//------------------------------RESPAWN--------------------
 void Paddle::respawn() {
 	x = WIN_WIDTH / 2 - texture->getW() / 2;
 	y = WIN_HEIGHT - 100;
@@ -92,6 +105,7 @@ void Paddle::respawn() {
 	destRect.w = w;
 }
 
+//---------------------HANDLE_EVENTS--------------------
 bool Paddle::handleEvent(SDL_Event& event) {
 	bool b = false;
 	switch (event.type) {
@@ -120,4 +134,18 @@ bool Paddle::handleEvent(SDL_Event& event) {
 			break;
 	}
 	return b;
+}
+
+//-------------------------GUARDAR_Y_CARGAR-------------------------------
+void Paddle::saveToFile(fstream& f) {
+	f << power << " ";
+	ArkanoidObject::saveToFile(f);
+}
+
+void Paddle::loadFromFile(ifstream& f) {
+	int p = 0;
+	f >> p;
+	power = p;
+	givePower(p);
+	ArkanoidObject::loadFromFile(f);
 }
