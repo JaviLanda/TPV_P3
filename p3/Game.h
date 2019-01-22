@@ -9,7 +9,7 @@
 
 #include "GameStateMachine.h"
 
-const uint NUM_TEXTURES = 12;
+const uint NUM_TEXTURES = 13;
 const uint WIN_WIDTH = 800;
 const uint WIN_HEIGHT = 600;
 const string FONT = "";
@@ -28,7 +28,8 @@ const TextureAtributtes TEXT_ATT[NUM_TEXTURES] = {
 	{ "topside.png", 1, 1 },{ "rewards.png", 10, 8 },
 	{ "Button_Start.png", 1, 1}, {"Button_Exit.png", 1, 1},
 	{ "Button_Load.png", 1, 1}, {"Button_MainMenu.png", 1, 1},
-	{ "Button_Continue.png", 1, 1}, { "Button_Save.png", 1, 1}
+	{ "Button_Continue.png", 1, 1}, { "Button_Save.png", 1, 1},
+	{ "paddleGun.png", 1, 1}
 };
 
 class Game {
@@ -38,7 +39,7 @@ public:
 
 	enum Textures_T {	TBrick, TPaddle, TBall, TSide, TTopSide, TReward, 
 						TButtonPlay, TButtonExit, TButtonLoad, TButtonMenu,
-						TButtonContinue, TButtonSave};
+						TButtonContinue, TButtonSave, TPaddleGun};
 
 	Texture* getText(Textures_T et) const { return nTexturas[et]; }
 	SDL_Renderer* getRend() { return renderer; }
@@ -73,8 +74,6 @@ protected:
 	void handleEvents();
 
 	Texture* nTexturas[NUM_TEXTURES];
-
-
 
 private:
 	bool end = false;

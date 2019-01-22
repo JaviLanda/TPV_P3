@@ -1,7 +1,7 @@
 #pragma once
 #include "MovingObject.h"
 
-enum Reward_Type { Nada, BigPaddle, SmallPaddle, ExtraHp, LvUp};
+enum Reward_Type { Nada, BigPaddle, SmallPaddle, ExtraHp, LvUp, Balas};
 
 class Reward : public MovingObject {
 public:

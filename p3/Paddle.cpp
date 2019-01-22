@@ -1,13 +1,16 @@
 #include "Paddle.h"
 #include "PlayState.h"
 
-Paddle::Paddle(SDL_Renderer* r, Texture* text, GameState* g) : MovingObject(r, text) {
+Paddle::Paddle(SDL_Renderer* r, Texture* text, GameState* g, Game* a) : MovingObject(r, text) {
 	pState = g;
+	app = a;
 
 	x = WIN_WIDTH / 2 - texture->getW() / 2;
 	y = WIN_HEIGHT - 100;
 	h = texture->getH();
 	w = texture->getW();
+
+	pos.setY(y);
 
 	destRect.h = h;
 	destRect.w = w;
@@ -23,6 +26,7 @@ Paddle::~Paddle() {}
 void Paddle::update() { //Revisar laterales
 	destRect.x += vel.getX();
 	x = destRect.x;
+	pos.setX(x);
 	if (x < WALL_WIDTH + 5 || (x + destRect.w) > WIN_WIDTH - WALL_WIDTH - 10) vel.setX(0);
 }
 
@@ -88,6 +92,11 @@ void Paddle::givePower(int p) {
 		destRect.w = w;
 		destRect.w *= 0.75;
 		break;
+	case Bullet: //Activar disparo
+		activeBullets = true;
+		numBullets = 0;
+		static_cast<ArkanoidObject*>(this)->setText(app->getText(Game::TPaddleGun));
+		break;
 	default:
 		break;
 	}
@@ -121,6 +130,19 @@ bool Paddle::handleEvent(SDL_Event& event) {
 			if (x < WIN_WIDTH - WALL_WIDTH - destRect.w) {
 				b = true;
 				vel.setX(3);
+			}
+			break;
+		case SDLK_SPACE:
+			if (activeBullets) { //Crear la bala
+				if (maxBullets > numBullets) {
+					static_cast<PlayState*>(pState)->createBullet(Vector2D(pos.getX() + (destRect.w / 2), pos.getY()));
+					numBullets++;
+					if (numBullets == maxBullets) {
+						static_cast<ArkanoidObject*>(this)->setText(app->getText(Game::TPaddle));
+						activeBullets = false;
+						numBullets = 0;
+					}
+				}
 			}
 			break;
 		default:

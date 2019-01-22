@@ -33,7 +33,7 @@ void PlayState::initObjects() {
 	initMap();
 	objects.push_back(new Ball(rend, app->getText(Game::TBall), this));
 	ballIt = --(objects.end());
-	objects.push_back(new Paddle(rend, app->getText(Game::TPaddle), this));
+	objects.push_back(new Paddle(rend, app->getText(Game::TPaddle), this, app));
 	paddleIt = --(objects.end());
 	objects.push_back(new Wall(rend, app->getText(Game::TSide), POS_WALL_L_ROOF, false));
 	objects.push_back(new Wall(rend, app->getText(Game::TSide), POS_WALL_R, false));
@@ -52,10 +52,17 @@ void PlayState::initMap() {
 	mapIt = objects.begin();
 }
 
+//--------------Crear_Bullet--------------------
+void PlayState::createBullet(Vector2D p) {
+	objects.push_back(new Bullets(rend, app->getText(Game::TReward), p, this));
+}
+
+//--------------Crear_Reward--------------------
 void PlayState::createReward(const SDL_Rect &rect) {
 	int aux = rand() % REWARD_CHANCE;
 	if (aux == 0) {
-		int r = rand() % 4;
+		//int r = rand() % 5;
+		int r = 4;
 		switch (r) {
 		case 0:
 			objects.push_back(new RewardX1(rend, app->getText(Game::TReward), rect.x, rect.y, this));
@@ -68,6 +75,9 @@ void PlayState::createReward(const SDL_Rect &rect) {
 			break;
 		case 3:
 			objects.push_back(new RewardX4(rend, app->getText(Game::TReward), rect.x, rect.y, this));
+			break;
+		case 4:
+			objects.push_back(new RewardX5(rend, app->getText(Game::TReward), rect.x, rect.y, this));
 			break;
 		default:
 			break;
@@ -129,6 +139,9 @@ void PlayState::handleEvents(SDL_Event& e) {
 		case SDLK_i:	//Añadir vida
 			addLife();
 			break;
+		case SDLK_u:	//Activar modo disparo
+			static_cast<Paddle*>(*paddleIt)->givePower(5);
+			break;
 		default:
 			break;
 		}
@@ -188,6 +201,22 @@ bool PlayState::collidesReward(const SDL_Rect &rect) {
 	return b;
 }
 
+bool PlayState::collides_Bullet_Block(const SDL_Rect &rect) {
+	bool b = false;
+	//Colisiones con Bloques
+	Block* block = nullptr;
+	block = static_cast<BlockMap*>(*mapIt)->blockAt(Vector2D(rect.x, rect.y));
+	if (block != nullptr) {
+		if (block->getActive()) {
+			static_cast<BlockMap*>(*mapIt)->ballHitsBlock(block);
+			b = true;
+			app->addScore();
+			createReward(block->getRect());
+		}
+	}
+	return b;
+}
+
 //----------------------------------------------Diversos-----------------------------------------
 //Siguiente nivel
 void PlayState::nextLevel() {
@@ -239,59 +268,48 @@ void PlayState::load() {
 
 	if (tempCode == -1) lose = true;
 
-	while (tempCode != -1 && !searchGame(tempCode)) {
+	ifstream f;
+	f.open(SAVEFILE);
+
+	while (tempCode != -1 && !searchGame(tempCode, code, numLin, f)) {
 		cout << "No existe la partida solicitada, por favor introduzca otro codigo o '-1' para salir." << endl;
 		cout << "Codigo: ";
 		cin >> tempCode;
 		if (tempCode == -1) lose = true;
 	}
 
-	ifstream f;
-	f.open(SAVEFILE);
-
-	f >> code;
-	f >> numLin;
 	initObjectsFromFile(f);
 
 	f.close();
 }
 
-void PlayState::initObjectsFromFile(ifstream& f) {
-	//Cargamos la vida, puntuacion y nivel
-	int tPuntos = 0;
-	f >> vidas >> tPuntos >> nivel;
+//Busqueda de codigo en el archivo de guardados
+bool PlayState::searchGame(int c, int &code, int &numLin, ifstream &f) {
 
-	app->setScore(tPuntos);
+	bool end = false;
+	bool found = false;
 
-	//Iniciamos los objetos
-	blockMap = new BlockMap(rend, app->getText(Game::TBrick));
-	objects.push_front(blockMap);
-	mapIt = objects.begin();
-	objects.push_back(new Ball(rend, app->getText(Game::TBall), this));
-	ballIt = --(objects.end());
-	objects.push_back(new Paddle(rend, app->getText(Game::TPaddle), this));
-	paddleIt = --(objects.end());
-	objects.push_back(new Wall(rend, app->getText(Game::TSide), POS_WALL_L_ROOF, false));
-	objects.push_back(new Wall(rend, app->getText(Game::TSide), POS_WALL_R, false));
-	objects.push_back(new Wall(rend, app->getText(Game::TTopSide), POS_WALL_L_ROOF, true));
-	lastIt = --(objects.end());
-
-	//Cargamos los valores de los objetos del fichero
-	for (auto it = objects.begin(); it != objects.end(); it++) {
-		static_cast<ArkanoidObject*>(*it)->loadFromFile(f);
+	while (!end) {
+		f >> code;
+		if (f.fail()) {
+			end = true;
+		}
+		f >> numLin;
+		if (c != code) {
+			for (int i = 0; i < numLin + 1; i++) {
+				f.ignore(INT_MAX, '\n');
+			}
+		}
+		else { //Lo encuentra!
+			end = true;
+			found = true;
+		}
 	}
 
-	//Calculamos y añadimos los posibles rewards
-	numRewards = numLin - 7 - blockMap->numRow();
-	for (int i = 0; i < numRewards; i++) {
-		objects.push_back(new Reward(rend, app->getText(Game::TReward), 0, 0, this));
-		auto it = --objects.end();
-		static_cast<ArkanoidObject*>(*it)->loadFromFile(f);
-	}
+	return found;
 }
 
-//Busqueda de codigo en el archivo de guardados
-bool PlayState::searchGame(int c) {
+bool PlayState::searchSavedGame(int c) {
 	ifstream f;
 	f.open(SAVEFILE);
 
@@ -319,12 +337,48 @@ bool PlayState::searchGame(int c) {
 	return found;
 }
 
+
+void PlayState::initObjectsFromFile(ifstream& f) {
+	//Cargamos la vida, puntuacion y nivel
+	int tPuntos = 0;
+	f >> vidas >> tPuntos >> nivel;
+
+	app->setScore(tPuntos);
+
+	//Iniciamos los objetos
+	blockMap = new BlockMap(rend, app->getText(Game::TBrick));
+	objects.push_front(blockMap);
+	mapIt = objects.begin();
+	objects.push_back(new Ball(rend, app->getText(Game::TBall), this));
+	ballIt = --(objects.end());
+	objects.push_back(new Paddle(rend, app->getText(Game::TPaddle), this, app));
+	paddleIt = --(objects.end());
+	objects.push_back(new Wall(rend, app->getText(Game::TSide), POS_WALL_L_ROOF, false));
+	objects.push_back(new Wall(rend, app->getText(Game::TSide), POS_WALL_R, false));
+	objects.push_back(new Wall(rend, app->getText(Game::TTopSide), POS_WALL_L_ROOF, true));
+	lastIt = --(objects.end());
+
+	//Cargamos los valores de los objetos del fichero
+	for (auto it = objects.begin(); it != objects.end(); it++) {
+		static_cast<ArkanoidObject*>(*it)->loadFromFile(f);
+	}
+
+	//Calculamos y añadimos los posibles rewards
+	numRewards = numLin - 7 - blockMap->numRow();
+	for (int i = 0; i < numRewards; i++) {
+		objects.push_back(new Reward(rend, app->getText(Game::TReward), 0, 0, this));
+		auto it = --objects.end();
+		static_cast<ArkanoidObject*>(*it)->loadFromFile(f);
+	}
+}
+
+
 //--------------------------Guardar---------------------------
 void PlayState::save() {
 	cout << "Introduce codigo de partida: ";
 	cin >> tempCode;
 
-	while (searchGame(tempCode)) {
+	while (searchSavedGame(tempCode)) {
 		cout << "Ya existe una partida guardada con ese codigo, por favor introduce un codigo diferente." << endl;
 		cout << "Codigo: ";
 		cin >> tempCode;

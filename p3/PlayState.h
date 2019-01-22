@@ -12,6 +12,8 @@
 #include "RewardX2.h"
 #include "RewardX3.h"
 #include "RewardX4.h"
+#include "RewardX5.h"
+#include "Bullets.h"
 
 const uint NUM_MAPS = 3;
 const uint WALL_WIDTH = 40;
@@ -20,6 +22,7 @@ const uint PADDLE_MOVE = 5;
 const uint REWARD_W = 30;
 const uint REWARD_H = 20;
 const uint REWARD_CHANCE = 5;
+const pair<int, int> BULLET_DIMENSIONS = pair<int, int> (10, 10);
 
 const string SAVEFILE = "../images/save.ark";
 
@@ -51,8 +54,10 @@ public:
 	//Colisiones
 	bool collidesBall(const SDL_Rect& rect, const Vector2D& vel, Vector2D& collVector);
 	bool collidesReward(const SDL_Rect& rect);
+	bool collides_Bullet_Block(const SDL_Rect& rect);
 
 	//Variados
+	void createBullet(Vector2D p);
 	void createReward(const SDL_Rect& rect);
 	void powerUp(int type);
 	void addLife() { vidas++; }
@@ -66,8 +71,8 @@ public:
 	void save();
 	void load();
 	void initObjectsFromFile(ifstream& f);
-	bool searchSaveGame();
-	bool searchGame(int c);
+	bool searchSavedGame(int c);
+	bool searchGame(int c, int &code, int &numLin, ifstream &f);
 
 
 protected:
@@ -78,7 +83,6 @@ protected:
 	bool win = false;
 	bool lose = false;
 
-	
 	int vidas = 0;
 	int level = 0;
 
@@ -96,6 +100,4 @@ private:
 	int numRewards = 0, numLin;
 	int code = 0;
 	int tempCode = 0;
-
-	
 };

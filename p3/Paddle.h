@@ -1,11 +1,11 @@
 #pragma once
 #include "MovingObject.h"
 
-enum PowerUps { None, Big, Small, VidaExtra, NextLv };
+enum PowerUps { None, Big, Small, VidaExtra, NextLv, Bullet };
 
 class Paddle : public MovingObject {
 public:
-	Paddle(SDL_Renderer* r, Texture* text, GameState* g);
+	Paddle(SDL_Renderer* r, Texture* text, GameState* g, Game* a);
 	virtual ~Paddle();
 
 	virtual void saveToFile(fstream& f);
@@ -23,6 +23,11 @@ public:
 	void respawn();
 
 protected:
+	Game* app;
+
 	bool moveL, moveR;
+	bool activeBullets = false;
+	int numBullets = 0;
+	int maxBullets = 5;
 	int power = 0;
 };

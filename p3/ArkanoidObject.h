@@ -19,6 +19,7 @@ public:
 
 	bool getActive() { return active; }
 	void setActive(bool a) { active = a; }
+	void setText(Texture* t) { texture = t; }
 
 protected:
 	Vector2D pos;
